@@ -124,7 +124,7 @@ S = [S1, S2, S3, S4]
 Gp = max(S) / sum(S)
 
 
-Gt = 0.7679
+Gt = t.ppf(q=0.975, df=9)
 if Gp < Gt:
     check2 = "The dispersion is homogeneous with probability 95%"
 else:
@@ -146,8 +146,10 @@ T = [t1, t2, t3, t4]
 T_tabl = t.ppf(q=0.975, df=9)
 
 k = 0
+NT = []
 for i in range(n):
     if T[i] < T_tabl:
+        NT.append(T[i])
         b[i] = 0
         k += 1
 
@@ -158,6 +160,8 @@ if k != 0:
         index_list) + " - coefficients are too small we can remove it from equation"
 else:
     deleted_koef = "all coefficients are too big to be in equation."
+
+
 
 ys1 = b[0] + b[1] * x1_m[0] + b[2] * x2_m[0] + b[3] * x3_m[0]
 ys2 = b[0] + b[1] * x1_m[1] + b[2] * x2_m[1] + b[3] * x3_m[1]
@@ -230,3 +234,5 @@ print(" y1 =", round(y_student[0], 3), "\n y2 =", round(y_student[1], 3), \
 
 print("\nFisher's criterion: Fp =", round(Fp, 3))
 print(check3)
+
+print("insignificant coefficients", NT)
