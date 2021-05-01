@@ -1,10 +1,13 @@
 import random
 import numpy as np
 from scipy.stats import f, t
+import time
 from sklearn import linear_model
+
 
 m = 3
 n = 15
+# варіант 317
 x1min = -7
 x1max = 8
 x2min = -7
@@ -89,6 +92,7 @@ print("Перевірка за критерієм Кохрена")
 print("Середні значення відгуку за рядками:", "\n", +Y_average[0], Y_average[1], Y_average[2], Y_average[3],
       Y_average[4], Y_average[5], Y_average[6], Y_average[7])
 # розрахунок дисперсій
+start_time_kohren = time.perf_counter()
 dispersions = []
 for i in range(len(Y_matrix)):
     a = 0
@@ -105,8 +109,11 @@ if Gp < Gt:
 else:
     print("Дисперсія неоднорідна")
 
+print(f"Час перевірки однорідності дисперсії за Кохреном: {time.perf_counter()-start_time_kohren}")
+print(" ")
 # критерій Стьюдента
-print(" Перевірка значущості коефіцієнтів за критерієм Стьюдента")
+print("Перевірка значущості коефіцієнтів за критерієм Стьюдента")
+start_time_student = time.perf_counter()
 sb = sum(dispersions) / len(dispersions)
 sbs = (sb / (n * m)) ** 0.5
 
@@ -117,7 +124,9 @@ res = [0] * 11
 coef_1 = []
 coef_2 = []
 F3 = (m - 1) * n
+
 # перевірка значущості коефіцієнтів(scipy)
+
 for i in range(n-4):
     if t_list[i] < t.ppf(q=0.975, df=F3):
         coef_2.append(b[i])
@@ -126,10 +135,11 @@ for i in range(n-4):
         coef_1.append(b[i])
         res[i] = b[i]
         d += 1
-
-# вивід
 print("Значущі коефіцієнти регресії:", coef_1)
 print("Незначущі коефіцієнти регресії:", coef_2)
+print(f"Час перевірки значимості коефіцієнтів регресії за Стьюдентом: {time.perf_counter() - start_time_student}")
+
+print(" ")
 
 # значення y з коефіцієнтами регресії
 y_st = []
@@ -140,6 +150,7 @@ print("Значення з отриманими коефіцієнтами:\n", 
 
 # критерій Фішера
 print("\nПеревірка адекватності за критерієм Фішера\n")
+start_time_fisher = time.perf_counter()
 Sad = m * sum([(y_st[i] - Y_average[i]) ** 2 for i in range(n)]) / (n - d)
 Fp = Sad / sb
 F4 = n - d
@@ -148,3 +159,4 @@ if Fp < f.ppf(q=0.95, dfn=F4, dfd=F3):
     print("Рівняння регресії адекватне при рівні значимості 0.05")
 else:
     print("Рівняння регресії неадекватне при рівні значимості 0.05")
+print(f"Час перевірки адекватності моделі оригіналу за допомогою критерію Фішера: {time.perf_counter() - start_time_fisher}")
