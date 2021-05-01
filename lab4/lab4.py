@@ -5,7 +5,7 @@ from tabulate import tabulate
 from scipy.stats import f, t
 
 
-def make_experiment(m=3):
+def make_experiment(m=4):
     def dispersion(y_list, avg_y_list, m):
         Sy = []
         elem = 0
@@ -80,7 +80,7 @@ def make_experiment(m=3):
 
     def print_matrix():
         print("\n" + "-_-_" * 9 + "Матриця ПФЕ" + "-_-_" * 9 + "\n",
-              tabulate([tableHeader,
+              tabulate([table_Header(m),
                         x0 + [xFactors[0][0]] + [xFactors[0][1]] + [xFactors[0][2]] + xFactors12[0] + xFactors13[0] +
                         xFactors23[0] + xFactors123[0] + yList[0] + [avgYList[0]] + [Sy[0]],
                         x0 + [xFactors[1][0]] + [xFactors[1][1]] + [xFactors[1][2]] + xFactors12[1] + xFactors13[1] +
@@ -100,7 +100,7 @@ def make_experiment(m=3):
                         ], headers="firstrow", tablefmt="pretty"))
 
         print("\n" + "-_-_" * 7 + "Нормалізована матриця ПФЕ" + "-_-_" * 7 + "\n",
-              tabulate([tableHeader,
+              tabulate([table_Header(m),
                         x0 + [xFactorsNorm[0][0]] + [xFactorsNorm[0][1]] + [xFactorsNorm[0][2]] + [xFactors12Norm[0]] +
                         [xFactors13Norm[0]] + [xFactors23Norm[0]] + [xFactors123Norm[0]] + yList[0] + [avgYList[0]] + [
                             Sy[0]],
@@ -128,12 +128,21 @@ def make_experiment(m=3):
                         ], headers="firstrow", tablefmt="pretty"))
 
     N = 8
-    if m == 3:
-        tableHeader = ["X0", "X1", "X2", "X3", "X12", "X13", "X23", "X123", "Y1", "Y2", "Y3", "avgY", "S^2"]
-    elif m == 4:
-        tableHeader = ["X0", "X1", "X2", "X3", "X12", "X13", "X23", "X123", "Y1", "Y2", "Y3", "Y4", "avgY", "S^2"]
-    else:
-        print("Unsuccessful experiment")
+    # if m == 3:
+    #     tableHeader = ["X0", "X1", "X2", "X3", "X12", "X13", "X23", "X123", "Y1", "Y2", "Y3", "avgY", "S^2"]
+    # elif m == 4:
+    #     tableHeader = ["X0", "X1", "X2", "X3", "X12", "X13", "X23", "X123", "Y1", "Y2", "Y3", "Y4", "avgY", "S^2"]
+    # else:
+    #     print("Unsuccessful experiment")
+
+    def table_Header(m):
+        tableHeader = ["X0", "X1", "X2", "X3", "X12", "X13", "X23", "X123"]
+        for i in range(m):
+            tableHeader.append("Y{}".format(i+1))
+        tableHeader.append("avgY")
+        tableHeader.append("S^2")
+
+        return tableHeader
 
     xMinList = [-10, -20, 50]
     xMaxList = [50, 60, 55]
